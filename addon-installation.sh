@@ -1,4 +1,9 @@
 #!/usr/bin/env bash
+
+###
+# lines divided by more than 2 empty lines must be executed independently
+###
+
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
 subdir="install_files_for_extensions"
 
@@ -8,6 +13,9 @@ source "${DIR}/${subdir}/install_helm_and_nfs_client.sh"
 
 #if you have not installed helm yet
 install_helm
+
+
+
 #if you have not yet added the stable charts repo
 add_stable_charts_repo
 #install nfs client, but you need to provide your nfs server values:
@@ -41,6 +49,8 @@ install_nfs_client $server_ip $nfs_path
 #git, go, cfssl and cfssljson installed
 nfs_client_sc_name="nfs-client" #if you did not manually change the nfs client install function, then this is correct
 download_and_install_vsphere_extension "$nfs_client_sc_name"
+
+
 
 #before executing this, make sure you have
 #git, go, cfssl and cfssljson installed

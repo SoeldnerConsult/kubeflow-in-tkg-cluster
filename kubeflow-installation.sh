@@ -1,5 +1,10 @@
 #!/usr/bin/env bash
 
+###
+# lines divided by more than 2 empty lines must be executed independently
+###
+
+
 #obtain storage class via "kubectl get sc"
 storageclass=gold-tanzu-kubernetes-storage-policy
 #obtain virtualmachineclass via "kubectl get virtualmachineclasses"
@@ -34,37 +39,57 @@ source "${DIR}/${subdir}/install-kubeflow.sh"
 source "${DIR}/${subdir}/post-patch-argo.sh"
 source "${DIR}/${subdir}/open-up-services.sh"
 source "${DIR}/${subdir}/post-patch-argo.sh"
-
 source "${DIR}/${subdir}/ldap_connector_configuration_script.sh"
 
 #prepare some environment variables and login
 prepare_tkg_cluster_creation $storageclass $vmclass_cp $vmclass_worker \
 $vm_image $namespace $clustername $supervisor_ip $username_and_domain
 
+
+
+
 #if succesfully logged in, proceed with cluster creation
 create_cluster $supervisor_ip $clustername $namespace $vm_image \
 $control_machine_count $worker_machine_count
 
+
+
+
 #if cluster was successfully installed, patch the api server
 append_api_server_flags $supervisor_ip $namespace $clustername $username_and_domain
+
+
+
 
 #download kubeflow files
 download_and_unpack_kubeflow
 create_local_kubeflow_kustomize_build
 
+
+
+
 #when api server patch is finished, proceed with kubeflow preinstall patching
 create_psp_rolebinding_patches
 patch_knative_deployment_errors
+
+
+
 
 #install kubeflow and wait for it to be ready
 apply_kubeflow_kustomize
 wait_for_kubeflowinstall
 
+
+
+
 #well, patch argo in kubernetes
 post_patch_argo_from_docker_to_pns
 
+
+
 #allow access to kubeflow
 make_kubeflow_accessible_via_https_from_outside
+
 
 #BEFORE you proceed with this step I !!!highly!!! recommend
 #Reading this blogpost:
@@ -93,6 +118,7 @@ name_attribute="displayName"
 
 configure_dex_ldap_connector $host $bindDN $bindPW "$username_prompt" \
 $baseDN $username_attribute $id_attribute $email_attribute $name_attribute
+
 
 
 #if you need to change pw:
