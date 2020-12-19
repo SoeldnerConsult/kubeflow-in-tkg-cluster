@@ -25,7 +25,7 @@ necessary steps:
 5. post kubeflow install patches
 6. open up http access to kubeflow from outside
 7. configure LDAP connector for AD access
-8. **you need to do this** >>> make storage class available with Read Write Many volumes
+8. make storage class available with Read Write Many volumes (i.e. with NFS-Server + Client)
 9. install vSphere extension
 10. install kubeflow extension
 
