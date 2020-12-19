@@ -17,6 +17,8 @@ function download_and_install_vsphere_extension() {
   resourcePath=additional/resources.yaml
   sed -i "s/nfs-client/$readWriteManyStorageClass/" $resourcePath
 
+  kubectl apply -f additional/initial-resources.yaml
+
   #create certifcate request and sign..
   #make sure, go; cfssl cfssljson are installed
   pushd .

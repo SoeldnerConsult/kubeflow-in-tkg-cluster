@@ -5,15 +5,12 @@ function install_helm() {
   ./get_helm.sh
 }
 
-# if the
+# if stable charts are yet not added
 function add_stable_charts_repo() {
   helm repo add stable https://charts.helm.sh/stable
 }
 
 function install_nfs_client(){
-  server_ip="10.0.21.100"
-  nfs.path="/mnt/Pool1"
-
   server_ip=$1
   nfs_path=$2
 

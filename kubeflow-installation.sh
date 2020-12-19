@@ -93,3 +93,8 @@ name_attribute="displayName"
 
 configure_dex_ldap_connector $host $bindDN $bindPW "$username_prompt" \
 $baseDN $username_attribute $id_attribute $email_attribute $name_attribute
+
+
+#if you need to change pw:
+kubectl edit -n auth cm dex
+kubectl rollout restart deployment dex -n auth

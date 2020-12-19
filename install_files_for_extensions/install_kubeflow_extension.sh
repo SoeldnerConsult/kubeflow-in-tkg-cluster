@@ -15,6 +15,7 @@ function install_kubeflow_extension(){
 
   #deploy tenancy-fixer
   kubectl apply -f tenancy-fixer.yaml
+  sleep 5
   mutator=$(kubectl get pods --selector=app=tenancy-fixer -ojsonpath='{.items[*].metadata.name}')
   kubectl wait --for=condition=Ready --timeout=300s pod/$mutator
 
