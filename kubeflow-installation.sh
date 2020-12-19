@@ -48,6 +48,10 @@ $control_machine_count $worker_machine_count
 #if cluster was successfully installed, patch the api server
 append_api_server_flags $supervisor_ip $namespace $clustername $username_and_domain
 
+#download kubeflow files
+download_and_unpack_kubeflow
+create_local_kubeflow_kustomize_build
+
 #when api server patch is finished, proceed with kubeflow preinstall patching
 create_psp_rolebinding_patches
 patch_knative_deployment_errors

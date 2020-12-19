@@ -36,7 +36,3 @@ function create_local_kubeflow_kustomize_build() {
   kfctl build -V -f ${CONFIG_URI}
   export CONFIG_FILE="${KF_DIR}/kfctl_istio_dex.v1.1.0.yaml"
 }
-
-download_and_unpack_kubeflow
-create_local_kubeflow_kustomize_build
-
