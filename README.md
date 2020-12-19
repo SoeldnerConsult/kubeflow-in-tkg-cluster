@@ -30,5 +30,5 @@ necessary steps:
 10. install kubeflow extension
 
 steps 1-7 are in kubeflow-installation
-steps 9 and 10 are in addon-installation
+steps 8-10 in addon-installation
  
