@@ -3,23 +3,55 @@
 ###
 # lines divided by more than 2 empty lines must be executed independently
 ###
+allset=0
+
+function check_for_set_var() {
+  if [[ ! -n $1 ]]; then
+    echo "1"
+  else
+    echo "0"
+  fi
+}
+
+val=$(check_for_set_var $storageclass)
+allset=$((allset+val))
+val=$(check_for_set_var $namespace)
+allset=$((allset+val))
+val=$(check_for_set_var $clustername)
+allset=$((allset+val))
+val=$(check_for_set_var $supervisor_ip)
+allset=$((allset+val))
+val=$(check_for_set_var $username_and_domain)
+allset=$((allset+val))
 
 
-#obtain storage class via "kubectl get sc"
-storageclass=gold-tanzu-kubernetes-storage-policy
+if [[ $allset -ne 0 ]];then
+  echo "you need to set and export the following variables:"
+  echo "export storageclass=??"
+  echo "export namespace=??"
+  echo "export clustername=??"
+  echo "export supervisor_ip=??"
+  echo "export username_and_domain=??"
+  echo ""
+  echo "we exit the program now"
+  exit 1
+fi
+
+#obtain storage class via "kubectl get sc" ;;example storage class
+#storageclass=gold-tanzu-kubernetes-storage-policy
 #obtain virtualmachineclass via "kubectl get virtualmachineclasses"
 vmclass_cp=guaranteed-medium
 vmclass_worker=guaranteed-xlarge
 #obtain virtualmachineimage via "kubectl get virtualmachineimages"
 vm_image=v1.17.8+vmware.1-tkg.1.5417466
 #your namespace
-namespace=kubeflow-ns
+##namespace=kubeflow-ns #example namespace
 #your cluster name
-clustername=kubeflow-tkg
+#clustername=kubeflow-tkg #example clustername
 #ip of workload management cluster ip
-supervisor_ip=10.4.10.1
+#supervisor_ip=10.4.10.1 #example supervisor ip
 #utilized username for logging into the cluster
-username_and_domain=administrator@vsphere.local
+#username_and_domain=administrator@vsphere.local #example username and domain
 #1 or 3
 control_machine_count=1
 #at least 7
@@ -45,51 +77,30 @@ source "${DIR}/${subdir}/ldap_connector_configuration_script.sh"
 prepare_tkg_cluster_creation $storageclass $vmclass_cp $vmclass_worker \
 $vm_image $namespace $clustername $supervisor_ip $username_and_domain
 
-
-
-
 #if succesfully logged in, proceed with cluster creation
 create_cluster $supervisor_ip $clustername $namespace $vm_image \
 $control_machine_count $worker_machine_count
 
-
-
-
 #if cluster was successfully installed, patch the api server
 append_api_server_flags $supervisor_ip $namespace $clustername $username_and_domain
-
-
-
 
 #download kubeflow files
 download_and_unpack_kubeflow
 create_local_kubeflow_kustomize_build
 
-
-
-
 #when api server patch is finished, proceed with kubeflow preinstall patching
 create_psp_rolebinding_patches
 patch_knative_deployment_errors
-
-
-
 
 #install kubeflow and wait for it to be ready
 apply_kubeflow_kustomize
 wait_for_kubeflowinstall
 
-
-
-
 #well, patch argo in kubernetes
 post_patch_argo_from_docker_to_pns
 
-
-
 #allow access to kubeflow
 make_kubeflow_accessible_via_https_from_outside
-
 
 #BEFORE you proceed with this step I !!!highly!!! recommend
 #Reading this blogpost:
@@ -118,8 +129,6 @@ name_attribute="displayName"
 
 configure_dex_ldap_connector $host $bindDN $bindPW "$username_prompt" \
 $baseDN $username_attribute $id_attribute $email_attribute $name_attribute
-
-
 
 #if you need to change pw:
 kubectl edit -n auth cm dex
