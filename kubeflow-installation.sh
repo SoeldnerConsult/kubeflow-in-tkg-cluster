@@ -34,7 +34,7 @@ if [[ $allset -ne 0 ]];then
   echo "export username_and_domain=??"
   echo ""
   echo "we exit the program now"
-  exit 1
+  return 1
 fi
 
 #obtain storage class via "kubectl get sc" ;;example storage class
