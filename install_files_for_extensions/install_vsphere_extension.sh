@@ -31,7 +31,9 @@ function download_and_install_vsphere_extension() {
   kubectl apply -f $resourcePath
 
   #deploy vsphere-extensions
+  sleep 2
   controller=$(kubectl -n vsphere-extensions get pods --selector=app=vsphere-extensions -ojsonpath='{.items[*].metadata.name}')
+  sleep 2
   kubectl -n vsphere-extensions wait --for=condition=Ready --timeout=300s pod/$controller
 
   webhookResource=additional/webhook.yaml
