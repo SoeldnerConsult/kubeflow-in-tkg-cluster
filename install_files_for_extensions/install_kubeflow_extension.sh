@@ -16,12 +16,12 @@ function install_kubeflow_extension(){
   #deploy tenancy-fixer
   kubectl apply -f tenancy-fixer.yaml
   sleep 5
-  mutator=$(kubectl get pods --selector=app=tenancy-fixer -ojsonpath='{.items[*].metadata.name}')
-  kubectl wait --for=condition=Ready --timeout=300s pod/$mutator
+  mutator=$(kubectl get pods -n kubeflow-extension --selector=app=tenancy-fixer -ojsonpath='{.items[*].metadata.name}')
+  kubectl -n kubeflow-extension wait --for=condition=Ready --timeout=300s pod/$mutator
 
   #obtain certificate from pod, which the api-server should utilize as public-key
-  controller=$(kubectl get pods --selector=app=tenancy-fixer -o jsonpath='{.items[*].metadata.name}')
-  cert=$(kubectl exec $controller -- cat /var/run/secrets/kubernetes.io/serviceaccount/ca.crt | base64 | tr -d '\n')
+  controller=$(kubectl -n kubeflow-extension get pods --selector=app=tenancy-fixer -o jsonpath='{.items[*].metadata.name}')
+  cert=$(kubectl -n kubeflow-extension exec $controller -- cat /var/run/secrets/kubernetes.io/serviceaccount/ca.crt | base64 | tr -d '\n')
   sed -i.bak -E "s/caBundle:.*?/caBundle: $cert/" webhooks.yaml
   kubectl apply -f webhooks.yaml
 
