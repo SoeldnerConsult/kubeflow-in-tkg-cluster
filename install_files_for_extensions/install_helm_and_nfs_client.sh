@@ -13,7 +13,7 @@ function add_stable_charts_repo() {
 function install_nfs_client(){
   server_ip=$1
   nfs_path=$2
-
+  kubectl create ns nfs
   helm install nfs-provisioner -n nfs stable/nfs-client-provisioner \
     --set nfs.server="$server_ip" \
     --set nfs.path="$nfs_path" \
